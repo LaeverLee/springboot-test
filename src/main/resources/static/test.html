@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
+</head>
+<body onload="addCompany()">
+	<select name="company" id="companyId"></select>
+	<select name="order" id="orderId"></select>
+	<button type="button" id="button" onclick="showOrder()">查詢</button>
+
+	<div id="div"></div>
+
+	<script>
+function addCompany(){
+    fetch('/company/order' , {method: 'POST',headers: {'Content-Type' : 'application/json'}
+}).then(response => response.json())    
+    .then(data =>{
+        const selectElemant = document.getElementById('companyId');
+        selectElemant.innerHTML = '';
+        data.forEach(company => {
+            const option = document.createElement('option');
+            option.value = company.companyId;
+            option.text = company.companyName;
+            selectElemant.appendChild(option);
+        });
+    })
+    .catch(error => {
+        console.error('error', error);
+    })
+}
+
+const selectElemant = document.getElementById('companyId');
+
+selectElemant.addEventListener("change",function(){
+	const value = selectElemant.value;
+	console.log(value);
+    fetch('/company/' + value , {method: 'GET',headers: {'Content-Type' : 'application/json'}
+    }).then(response => response.json()) 
+        .then(data =>{
+        	console.log('aaaaa');
+            const orderId = document.getElementById('orderId');
+            orderId.innerHTML = '';
+            data.forEach(order => {
+                const option = document.createElement('option');
+                option.value = order.orderId;
+                option.text = order.orderName;
+                orderId.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('error', error);
+        })
+})
+
+
+function showOrder(){
+	const orderId = document.getElementById('orderId').value;
+	fetch('/company/company1/' + orderId  , {method: 'GET',headers: {'Content-Type' : 'application/json'}
+	}).then(response => response.json())    
+	    .then(data =>{
+	    	console.log(data);
+	        const div = document.getElementById('div');
+	        div.innerHTML = '';
+	        const span = document.createElement('span');
+	        span.textContent = data.orderId + data.orderName;
+	        div.appendChild(span);
+	    })
+	    .catch(error => {
+	        console.error('error', error);
+	    })
+}
+
+
+
+</script>
+
+
+</body>
+</html>
